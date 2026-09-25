@@ -5,7 +5,7 @@
 This sequence diagram traces the exact message flow between the Streamlit UI, the Gemini agent, and each external tool during a treatment recommendation generation.
 
 ```mermaid
-%%{init: {"themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
+%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
 sequenceDiagram
     actor User
     participant UI as Streamlit UI
