@@ -5,7 +5,7 @@
 This diagram illustrates the end-to-end 3-stage agentic pipeline: from image upload through Gemini Vision detection to tool-calling for personalized treatment recommendations.
 
 ```mermaid
-%%{init: {"themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
+%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
 flowchart LR
     subgraph DET["1. Detection & Assessment"]
         direction TB
@@ -41,17 +41,6 @@ flowchart LR
 
     DET -->|"Detection results + ZIP code"| TRT
 
-    classDef input fill:#4CAF50,color:#fff,stroke:#388E3C
-    classDef detect fill:#2196F3,color:#fff,stroke:#1976D2
-    classDef context fill:#FF9800,color:#fff,stroke:#F57C00
-    classDef agent fill:#9C27B0,color:#fff,stroke:#7B1FA2
-    classDef output fill:#607D8B,color:#fff,stroke:#455A64
-
-    class A,C,H input
-    class B,D,E,F,G detect
-    class I,J context
-    class K,L,M agent
-    class N,O output
 ```
 
 ## Key Design Principles (Section 9.1)
