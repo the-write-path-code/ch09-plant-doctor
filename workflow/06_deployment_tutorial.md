@@ -2,7 +2,6 @@
 
 > **Chapter 9.4 Supplement** — Deploying Plant Doctor from Scratch
 > 
-> *Part of "The Write Path" by Mohit Aggarwal*
 
 This guide provides a comprehensive, step-by-step walkthrough to deploy the Plant Doctor application to a brand-new Google Cloud Project. If you are following along in the book and want to deploy the app manually from your terminal, this is the exact sequence of commands to use.
 
