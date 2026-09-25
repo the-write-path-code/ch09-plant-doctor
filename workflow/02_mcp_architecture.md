@@ -5,7 +5,7 @@
 This diagram shows how the agricultural tools are exposed via the Model Context Protocol (MCP), enabling both the internal Gemini agent and external clients (Claude Desktop, etc.) to discover and invoke the same tools.
 
 ```mermaid
-%%{init: {"themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
+%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
 flowchart LR
     subgraph Clients["🖥️ Clients"]
         A1["🌱 Plant Doctor\nStreamlit App"]
@@ -49,10 +49,6 @@ flowchart LR
     C4 --> D1
     C4 --> D2
 
-    style Clients fill:#E3F2FD
-    style Protocol fill:#F3E5F5
-    style MCPServer fill:#E8F5E9
-    style DataSources fill:#FFF3E0
 ```
 
 ## Dual Interface Pattern
