@@ -5,7 +5,7 @@
 This diagram shows the full deployment pipeline from a manual trigger in GitHub Actions to a live Cloud Run service, as implemented in `.github/workflows/deploy.yml`.
 
 ```mermaid
-%%{init: {"themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
+%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
 flowchart LR
     A(["👨💻 Developer<br/>Run Deployment"])
 
@@ -40,16 +40,6 @@ flowchart LR
     GHA --> GCP
     GCP --> M
 
-    classDef trigger fill:#4CAF50,color:#fff,stroke:#388E3C
-    classDef secret fill:#FFF3E0,color:#4E342E,stroke:#FF9800
-    classDef output fill:#4CAF50,color:#fff,stroke:#388E3C
-
-    class A trigger
-    class S secret
-    class M output
-
-    style GHA fill:#E3F2FD,stroke:#2196F3
-    style GCP fill:#E8F5E9,stroke:#4CAF50
 ```
 
 ## Stateless Deployment Considerations (Section 9.4)
