@@ -6,35 +6,49 @@ This diagram shows how the Plant Doctor handles failures at each external depend
 
 ```mermaid
 flowchart TD
-    subgraph STACK ["Graceful Degradation Architecture (Zero Unhandled Exceptions)"]
-        direction TB
+    A(["<div style='min-width: 460px;'><b>Agentic Diagnostic Session</b><br/>ZIP Code & Infestation Level Provided</div>"])
 
-        S1["<div style='min-width: 750px;'><b>Phase 1 — Input & Coordinate Validation:</b> User submits ZIP code & infestation level<br/>➔ Validates geographical coordinates; prevents unhandled exceptions before external dispatch</div>"]
+    D{"Weather Telemetry<br/>Available?"}
+    E{"Soil Telemetry<br/>Available?"}
 
-        S2["<div style='min-width: 750px;'><b>Phase 2 — Resilient Weather Lookup (NOAA api.weather.gov):</b><br/>• <b>Healthy Path:</b> Ingests real-time temperature, wind velocity, and 7-day precipitation forecast<br/>• <b>Degraded Fallback:</b> On HTTP timeout/503, returns standard regional climate baseline with warning flag</div>"]
+    F["<div style='min-width: 190px;'><b>Weather Context</b><br/>Temp · Forecast · Wind</div>"]
+    H["<div style='min-width: 190px;'><b>Generic Weather</b><br/>Standard Parameters</div>"]
 
-        S3["<div style='min-width: 750px;'><b>Phase 3 — Resilient Soil Lookup (USDA sdmdataaccess.nrcs.usda.gov):</b><br/>• <b>Healthy Path:</b> Retrieves SSURGO soil texture, pH balance, and drainage classification<br/>• <b>Degraded Fallback:</b> On query timeout/empty grid, falls back to balanced loam defaults with warning flag</div>"]
+    G["<div style='min-width: 190px;'><b>Soil Context</b><br/>Texture · pH · Drainage</div>"]
+    I["<div style='min-width: 190px;'><b>Generic Soil</b><br/>Balanced Loam Default</div>"]
 
-        S4["<div style='min-width: 750px;'><b>Phase 4 — Resilient Product Retrieval (Serper Search API ➔ Amazon):</b><br/>• <b>Healthy Path:</b> Fetches curated Amazon product cards with verified pricing and direct affiliate links<br/>• <b>Degraded Fallback:</b> On API quota limit/error, dynamically synthesizes targeted Amazon search URL</div>"]
+    J["<div style='min-width: 480px;'><b>Generate Treatment Plan</b><br/>Gemini Model Synthesizes Available Environmental Telemetry</div>"]
 
-        S5["<div style='min-width: 750px;'><b>Phase 5 — Synthesis & Actionable Delivery:</b> Gemini model generates treatment plan<br/>➔ Best-effort execution succeeds; UI surfaces human-readable advisories detailing any fallback data</div>"]
+    L{"Product Search<br/>Available?"}
 
-        S1 ==> S2 ==> S3 ==> S4 ==> S5
-    end
+    M["<div style='min-width: 220px;'><b>Add Curated Product Links</b><br/>Verified Amazon Cards & Pricing</div>"]
+    N["<div style='min-width: 220px;'><b>Dynamic Search Link Fallback</b><br/>Direct Amazon Query URL</div>"]
 
-    classDef stack fill:#FFFFFF,stroke:#2563EB,color:#000000,stroke-width:2px
-    classDef s1 fill:#F3F4F6,stroke:#4B5563,color:#000000,stroke-width:1.5px
-    classDef s2 fill:#EBF5FF,stroke:#2563EB,color:#000000,stroke-width:1.5px
-    classDef s3 fill:#FEF9C3,stroke:#CA8A04,color:#000000,stroke-width:1.5px
-    classDef s4 fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
-    classDef s5 fill:#DCFCE7,stroke:#15803D,color:#000000,stroke-width:1.5px
+    O(["<div style='min-width: 480px;'><b>Complete Treatment Plan Delivered</b><br/>Actionable Advice with Explicit Telemetry Warning Tags</div>"])
 
-    class STACK stack
-    class S1 s1
-    class S2 s2
-    class S3 s3
-    class S4 s4
-    class S5 s5
+    A --> D & E
+
+    D -- Yes --> F --> J
+    D -- "No / Timeout" --> H --> J
+
+    E -- Yes --> G --> J
+    E -- "No / Timeout" --> I --> J
+
+    J --> L
+    L -- Yes --> M --> O
+    L -- "No / Rate Limit" --> N --> O
+
+    classDef start fill:#F3F4F6,stroke:#4B5563,color:#000000,stroke-width:1.5px
+    classDef decision fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
+    classDef ok fill:#DCFCE7,stroke:#15803D,color:#000000,stroke-width:1.5px
+    classDef fb fill:#FEF3C7,stroke:#D97706,color:#000000,stroke-width:1.5px
+    classDef plan fill:#FEF9C3,stroke:#CA8A04,color:#000000,stroke-width:1.5px
+
+    class A,O start
+    class D,E,L decision
+    class F,G,M ok
+    class H,I,N fb
+    class J plan
 ```
 
 ## Degradation Strategy
