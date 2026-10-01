@@ -5,41 +5,40 @@
 This diagram shows the full deployment pipeline from a manual trigger in GitHub Actions to a live Cloud Run service, as implemented in `.github/workflows/deploy.yml`.
 
 ```mermaid
-%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
-flowchart LR
-    A(["👨💻 Developer<br/>Run Deployment"])
-
-    subgraph GHA["1. GitHub Actions — CI/CD"]
+flowchart TD
+    subgraph STACK ["Cloud Deployment & Production Architecture (.github/workflows/deploy.yml)"]
         direction TB
-        B["Workflow Dispatch"]
-        C["Checkout Code"]
-        D["Authenticate with GCP<br/>Using GitHub Secrets"]
-        E["Configure Cloud SDK<br/>and Artifact Registry"]
-        F["Build Container Image<br/>AMD64"]
-        G["Push Image<br/>SHA Tag + Latest"]
 
-        S["Required GitHub Secrets<br/>Project ID · Region · Service Account Key"]
+        S1["<div style='min-width: 750px;'><b>Step 1 — Deployment Trigger:</b> Developer invokes GitHub Actions via <code>workflow_dispatch</code><br/>➔ Triggers automated CI/CD pipeline on the <code>main</code> branch with full parameter audit</div>"]
 
-        B --> C --> D --> E --> F --> G
-        S -.-> D
+        S2["<div style='min-width: 750px;'><b>Step 2 — Secure GCP Authentication:</b> GitHub Actions authenticates with Google Cloud<br/>➔ Loads <code>GCP_PROJECT_ID</code> & <code>GCP_SA_KEY</code> secrets; configures <code>gcloud</code> CLI & Artifact Registry</div>"]
+
+        S3["<div style='min-width: 750px;'><b>Step 3 — Multi-Stage Container Build:</b> Builds Docker container for <code>linux/amd64</code><br/>➔ <code>python:3.11-slim</code> base + <code>uv.lock</code> layer caching; tags and pushes to Artifact Registry</div>"]
+
+        S4["<div style='min-width: 750px;'><b>Step 4 — Cloud Run Service Deployment:</b> Deploys container via <code>gcloud run deploy</code><br/>➔ Enforces 2 GiB RAM, 2 vCPU, 300s timeout, and 0–10 autoscaling instances (scale-to-zero)</div>"]
+
+        S5["<div style='min-width: 750px;'><b>Step 5 — Runtime Secret Injection:</b> Injects API credentials at runtime startup<br/>➔ <code>GOOGLE_API_KEY</code> & <code>SERPER_API_KEY</code> bound directly to the live Cloud Run container</div>"]
+
+        S6["<div style='min-width: 750px;'><b>Step 6 — Live Public Application URL:</b> Streamlit healthcheck confirms readiness<br/>➔ Container listens on <code>0.0.0.0:8080</code>; live at <code>https://agri-assistant-*.run.app</code></div>"]
+
+        S1 ==> S2 ==> S3 ==> S4 ==> S5 ==> S6
     end
 
-    subgraph GCP["2. Google Cloud Platform"]
-        direction TB
-        H["Artifact Registry<br/>Store Container Image"]
-        I["Deploy Service<br/>to Cloud Run"]
-        J["Inject Runtime Secrets<br/>Google API Key · Serper API Key"]
-        K["Cloud Run Service<br/>2 GiB · 2 CPU · 300 s Timeout<br/>0–10 Instances"]
+    classDef stack fill:#FFFFFF,stroke:#2563EB,color:#000000,stroke-width:2px
+    classDef s1 fill:#F3F4F6,stroke:#4B5563,color:#000000,stroke-width:1.5px
+    classDef s2 fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
+    classDef s3 fill:#EBF5FF,stroke:#2563EB,color:#000000,stroke-width:1.5px
+    classDef s4 fill:#FEF9C3,stroke:#CA8A04,color:#000000,stroke-width:1.5px
+    classDef s5 fill:#FEF3C7,stroke:#D97706,color:#000000,stroke-width:1.5px
+    classDef s6 fill:#DCFCE7,stroke:#15803D,color:#000000,stroke-width:1.5px
 
-        H --> I --> J --> K
-    end
-
-    M(["🌐 Public Application URL<br/>agri-assistant-*.run.app"])
-
-    A --> GHA
-    GHA --> GCP
-    GCP --> M
-
+    class STACK stack
+    class S1 s1
+    class S2 s2
+    class S3 s3
+    class S4 s4
+    class S5 s5
+    class S6 s6
 ```
 
 ## Stateless Deployment Considerations (Section 9.4)

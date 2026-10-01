@@ -5,42 +5,37 @@
 This diagram illustrates the end-to-end 3-stage agentic pipeline: from image upload through Gemini Vision detection to tool-calling for personalized treatment recommendations.
 
 ```mermaid
-%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
 flowchart LR
-    subgraph DET["1. Detection & Assessment"]
+    subgraph STAGE1 ["Stage 1: Diagnosis"]
         direction TB
-        A["📸 Upload Image<br/>or Select Sample"]
-        B{"Image Available?"}
-        C["🌿 Load Sample Image"]
-        D["🔍 Detect Plant, Pest<br/>& Severity"]
-        E["📋 Detection Results<br/>Pest · Severity · Plant Type"]
-        F["⚡ Brief Assessment"]
-        G["⚠️ Risk Summary"]
-        H["📝 Enter ZIP Code"]
-
-        A --> B
-        B -- Yes --> D
-        B -- Use Sample --> C --> D
-        D --> E --> F --> G --> H
+        A["📸 Leaf Image Upload<br/>or Sample Selection"]
+        B["🔍 Gemini Vision<br/>Multimodal Analysis"]
+        C["📋 Pathology Results<br/>Pest · Severity · Plant"]
+        D["⚡ Risk Assessment<br/>Summary"]
+        E["🛑 Context Halt<br/>Enter Local ZIP"]
+        A --> B --> C --> D --> E
     end
 
-    subgraph TRT["2. Location-Aware Treatment"]
+    subgraph STAGE2 ["Stage 2: Treatment Generation"]
         direction TB
-        I["🌦️ Retrieve Weather Data<br/>Temperature · Wind · Forecast"]
-        J["🪨 Retrieve Soil Data<br/>Texture · pH · Drainage"]
-        K["🤖 Combine Detection,<br/>ZIP, Weather & Soil"]
-        L["💊 Generate Treatment Plan"]
-        M["🛒 Find Suitable Products"]
-        N["📦 Treatment Plan<br/>+ Product Options"]
-        O["📊 Interactive Menu<br/>Soil · Weather · Monitor · Q&A"]
-
-        I --> K
-        J --> K
-        K --> L --> M --> N --> O
+        F["🌦️ NOAA Weather<br/>& USDA Soil Lookup"]
+        G["🤖 Gemini Agent<br/>Context Synthesis"]
+        H["🛒 Serper Search<br/>Targeted Products"]
+        I["📦 Treatment Plan<br/>Delivered to User"]
+        F --> G --> H --> I
     end
 
-    DET -->|"Detection results + ZIP code"| TRT
+    STAGE1 ==>|"User inputs local ZIP & infestation level"| STAGE2
 
+    classDef s1 fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
+    classDef s2 fill:#EBF5FF,stroke:#2563EB,color:#000000,stroke-width:1.5px
+    classDef halt fill:#FEE2E2,stroke:#DC2626,color:#000000,stroke-width:2px
+    classDef node fill:#FFFFFF,stroke:#4B5563,color:#000000,stroke-width:1px
+
+    class STAGE1 s1
+    class STAGE2 s2
+    class E halt
+    class A,B,C,D,F,G,H,I node
 ```
 
 ## Key Design Principles (Section 9.1)

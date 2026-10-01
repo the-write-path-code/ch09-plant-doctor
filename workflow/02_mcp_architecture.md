@@ -5,50 +5,42 @@
 This diagram shows how the agricultural tools are exposed via the Model Context Protocol (MCP), enabling both the internal Gemini agent and external clients (Claude Desktop, etc.) to discover and invoke the same tools.
 
 ```mermaid
-%%{init: {"theme": "neutral", "themeVariables": {"fontFamily": "Arial, Helvetica, sans-serif", "fontSize": "11px", "actorFontSize": "11px", "noteFontSize": "10px", "messageFontSize": "10px"}}}%%
-flowchart LR
-    subgraph Clients["🖥️ Clients"]
-        A1["🌱 Plant Doctor\nStreamlit App"]
-        A2["🤖 Claude Desktop"]
-        A3["🔗 Any MCP Client"]
+flowchart TD
+    subgraph CONSUMERS ["Invocation Surfaces & Protocol Adapters"]
+        direction LR
+        subgraph PATH_A ["Internal Streamlit Workflow"]
+            direction TB
+            C1["🌱 Plant Doctor App<br/>(Streamlit Web UI)"]
+            NAT["Gemini Native Calling<br/>(direct Python functions)"]
+            C1 --> NAT
+        end
+        subgraph PATH_B ["External Agent Workflow"]
+            direction TB
+            C2["🤖 Claude Desktop / MCP Hosts<br/>(Standard MCP Clients)"]
+            MCP["FastMCP Protocol Server<br/>(@mcp.tool decorators)"]
+            C2 --> MCP
+        end
     end
 
-    subgraph Protocol["📡 Interface Layer"]
-        B1["Gemini Native\nFunction Calling"]
-        B2["MCP Protocol\nFastMCP Server"]
+    subgraph TOOLS ["Shared Tool Implementations & External APIs (agri_tools.py)"]
+        T1["get_weather<br/>NOAA Weather API"]
+        T2["get_soil_type<br/>USDA Soil Database"]
+        T3["get_location_context<br/>Composite Location Data"]
+        T4["search_amazon_products<br/>Serper / Amazon Search"]
+
+        NAT --> T1 & T2 & T4
+        MCP --> T1 & T2 & T3 & T4
     end
 
-    subgraph MCPServer["⚙️ MCP Server — agri_tools.py"]
-        C1["@mcp.tool()\nget_weather()"]
-        C2["@mcp.tool()\nget_soil_type()"]
-        C3["@mcp.tool()\nsearch_amazon_products()"]
-        C4["@mcp.tool()\nget_location_context()"]
-    end
+    classDef client fill:#F3F4F6,stroke:#4B5563,color:#000000,stroke-width:1.5px
+    classDef nat fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
+    classDef mcp fill:#FEF9C3,stroke:#CA8A04,color:#000000,stroke-width:1.5px
+    classDef tool fill:#DCFCE7,stroke:#15803D,color:#000000,stroke-width:1.5px
 
-    subgraph DataSources["🌐 External APIs"]
-        D1["NOAA Weather Service\napi.weather.gov"]
-        D2["USDA Soil Data Access\nsdmdataaccess.nrcs.usda.gov"]
-        D3["Serper Search API\ngoogle.serper.dev"]
-        D4["Amazon Product Listings"]
-    end
-
-    A1 --> B1
-    A2 --> B2
-    A3 --> B2
-    B1 --> C1
-    B1 --> C2
-    B1 --> C3
-    B2 --> C1
-    B2 --> C2
-    B2 --> C3
-    B2 --> C4
-    C1 --> D1
-    C2 --> D2
-    C3 --> D3
-    C3 --> D4
-    C4 --> D1
-    C4 --> D2
-
+    class C1,C2 client
+    class NAT nat
+    class MCP mcp
+    class T1,T2,T3,T4 tool
 ```
 
 ## Dual Interface Pattern
