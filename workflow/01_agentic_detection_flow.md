@@ -8,28 +8,28 @@ This diagram illustrates the end-to-end 3-stage agentic pipeline: from image upl
 flowchart LR
     subgraph STAGE1 ["Stage 1: Diagnosis"]
         direction TB
-        A["📸 Leaf Image Upload<br/>or Sample Selection"]
-        B["🔍 Gemini Vision<br/>Multimodal Analysis"]
-        C["📋 Pathology Results<br/>Pest · Severity · Plant"]
-        D["⚡ Risk Assessment<br/>Summary"]
-        E["🛑 Context Halt<br/>Enter Local ZIP"]
+        A["<div style='min-width: 300px;'><b>Leaf Image Upload</b><br/>User submits photo or selects sample</div>"]
+        B["<div style='min-width: 300px;'><b>Gemini Vision Analysis</b><br/>Multimodal inspection & identification</div>"]
+        C["<div style='min-width: 300px;'><b>Pathology Results</b><br/>Plant species, pest name & severity</div>"]
+        D["<div style='min-width: 300px;'><b>Risk Assessment</b><br/>Detailed summary & damage evaluation</div>"]
+        E["<div style='min-width: 300px;'><b>Context Halt Boundary</b><br/>System prompts for local ZIP code</div>"]
         A --> B --> C --> D --> E
     end
 
     subgraph STAGE2 ["Stage 2: Treatment Generation"]
         direction TB
-        F["🌦️ NOAA Weather<br/>& USDA Soil Lookup"]
-        G["🤖 Gemini Agent<br/>Context Synthesis"]
-        H["🛒 Serper Search<br/>Targeted Products"]
-        I["📦 Treatment Plan<br/>Delivered to User"]
+        F["<div style='min-width: 300px;'><b>Environmental Telemetry</b><br/>NOAA weather & USDA soil data</div>"]
+        G["<div style='min-width: 300px;'><b>Gemini Agent Synthesis</b><br/>Combines diagnosis with local context</div>"]
+        H["<div style='min-width: 300px;'><b>Targeted Search</b><br/>Serper API finds organic remedies</div>"]
+        I["<div style='min-width: 300px;'><b>Treatment Plan Delivered</b><br/>Actionable care advice & product links</div>"]
         F --> G --> H --> I
     end
 
-    STAGE1 ==>|"User inputs local ZIP & infestation level"| STAGE2
+    STAGE1 ==>|"User inputs local<br/>ZIP & infestation level"| STAGE2
 
     classDef s1 fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
     classDef s2 fill:#EBF5FF,stroke:#2563EB,color:#000000,stroke-width:1.5px
-    classDef halt fill:#FEE2E2,stroke:#DC2626,color:#000000,stroke-width:2px
+    classDef halt fill:#FEE2E2,stroke:#DC2626,color:#000000,stroke-width:1.5px
     classDef node fill:#FFFFFF,stroke:#4B5563,color:#000000,stroke-width:1px
 
     class STAGE1 s1
