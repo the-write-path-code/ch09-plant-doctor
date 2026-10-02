@@ -1,6 +1,6 @@
 # Workflow 1: Agentic Detection & Treatment Flow
 
-> **Chapter 9.1 & 9.2** — Separating diagnosis from downstream action / Integrating specialist tools and external APIs
+> **Figure 9.3 / Chapter 9.1 & 9.2** — Plant Doctor enforcing staged inputs: separating diagnosis from downstream action
 
 This diagram illustrates the end-to-end 3-stage agentic pipeline: from image upload through Gemini Vision detection to tool-calling for personalized treatment recommendations.
 

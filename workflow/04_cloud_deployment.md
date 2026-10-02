@@ -1,44 +1,41 @@
 # Workflow 4: CI/CD and Cloud Run Deployment Pipeline
 
-> **Chapter 9.4** — Deploying multimodal agents to Google Cloud Run
+> **Figure 9.6 / Chapter 9.4** — Deploying multimodal agents to Google Cloud Run
 
 This diagram shows the full deployment pipeline from a manual trigger in GitHub Actions to a live Cloud Run service, as implemented in `.github/workflows/deploy.yml`.
 
 ```mermaid
-flowchart TD
-    subgraph STACK ["Cloud Deployment & Production Architecture (.github/workflows/deploy.yml)"]
+flowchart LR
+    subgraph STAGE1 ["Stage 1: GitHub Actions CI/CD"]
         direction TB
-
-        S1["<div style='min-width: 750px;'><b>Step 1 — Deployment Trigger:</b> Developer invokes GitHub Actions via <code>workflow_dispatch</code><br/>➔ Triggers automated CI/CD pipeline on the <code>main</code> branch with full parameter audit</div>"]
-
-        S2["<div style='min-width: 750px;'><b>Step 2 — Secure GCP Authentication:</b> GitHub Actions authenticates with Google Cloud<br/>➔ Loads <code>GCP_PROJECT_ID</code> & <code>GCP_SA_KEY</code> secrets; configures <code>gcloud</code> CLI & Artifact Registry</div>"]
-
-        S3["<div style='min-width: 750px;'><b>Step 3 — Multi-Stage Container Build:</b> Builds Docker container for <code>linux/amd64</code><br/>➔ <code>python:3.11-slim</code> base + <code>uv.lock</code> layer caching; tags and pushes to Artifact Registry</div>"]
-
-        S4["<div style='min-width: 750px;'><b>Step 4 — Cloud Run Service Deployment:</b> Deploys container via <code>gcloud run deploy</code><br/>➔ Enforces 2 GiB RAM, 2 vCPU, 300s timeout, and 0–10 autoscaling instances (scale-to-zero)</div>"]
-
-        S5["<div style='min-width: 750px;'><b>Step 5 — Runtime Secret Injection:</b> Injects API credentials at runtime startup<br/>➔ <code>GOOGLE_API_KEY</code> & <code>SERPER_API_KEY</code> bound directly to the live Cloud Run container</div>"]
-
-        S6["<div style='min-width: 750px;'><b>Step 6 — Live Public Application URL:</b> Streamlit healthcheck confirms readiness<br/>➔ Container listens on <code>0.0.0.0:8080</code>; live at <code>https://agri-assistant-*.run.app</code></div>"]
-
-        S1 ==> S2 ==> S3 ==> S4 ==> S5 ==> S6
+        A["<div style='min-width: 300px;'><b>Workflow Dispatch Trigger</b><br/>Manual execution on main branch</div>"]
+        B["<div style='min-width: 300px;'><b>Repository Checkout</b><br/>Pulls code & uv lockfile dependencies</div>"]
+        C["<div style='min-width: 300px;'><b>GCP Secret Authentication</b><br/>Loads service account credentials</div>"]
+        D["<div style='min-width: 300px;'><b>Container Build (AMD64)</b><br/>Multi-stage build with cached layers</div>"]
+        E["<div style='min-width: 300px;'><b>Push Image to Registry</b><br/>Tagged with git SHA and latest</div>"]
+        A --> B --> C --> D --> E
     end
 
-    classDef stack fill:#FFFFFF,stroke:#2563EB,color:#000000,stroke-width:2px
-    classDef s1 fill:#F3F4F6,stroke:#4B5563,color:#000000,stroke-width:1.5px
-    classDef s2 fill:#EDE9FE,stroke:#7C3AED,color:#000000,stroke-width:1.5px
-    classDef s3 fill:#EBF5FF,stroke:#2563EB,color:#000000,stroke-width:1.5px
-    classDef s4 fill:#FEF9C3,stroke:#CA8A04,color:#000000,stroke-width:1.5px
-    classDef s5 fill:#FEF3C7,stroke:#D97706,color:#000000,stroke-width:1.5px
-    classDef s6 fill:#DCFCE7,stroke:#15803D,color:#000000,stroke-width:1.5px
+    subgraph STAGE2 ["Stage 2: Cloud Run Deployment"]
+        direction TB
+        F["<div style='min-width: 300px;'><b>Artifact Registry Ingestion</b><br/>Stores production container image</div>"]
+        G["<div style='min-width: 300px;'><b>Cloud Run Service Deploy</b><br/>gcloud run deploy with 2 GiB / 2 vCPU</div>"]
+        H["<div style='min-width: 300px;'><b>Runtime Secret Injection</b><br/>Binds Gemini & Serper API keys</div>"]
+        I["<div style='min-width: 300px;'><b>Public Application Live</b><br/>agri-assistant-*.run.app:8080 active</div>"]
+        F --> G --> H --> I
+    end
 
-    class STACK stack
-    class S1 s1
-    class S2 s2
-    class S3 s3
-    class S4 s4
-    class S5 s5
-    class S6 s6
+    STAGE1 ==>|"Automated CI/CD<br/>artifact handoff"| STAGE2
+
+    classDef s1 fill:#EFF6FF,stroke:#2563EB,stroke-width:1.5px,color:#000000
+    classDef s2 fill:#F0FDF4,stroke:#16A34A,stroke-width:1.5px,color:#000000
+    classDef live fill:#DCFCE7,stroke:#15803D,stroke-width:1.5px,color:#000000
+    classDef node fill:#FFFFFF,stroke:#4B5563,stroke-width:1px,color:#000000
+
+    class STAGE1 s1
+    class STAGE2 s2
+    class I live
+    class A,B,C,D,E,F,G,H node
 ```
 
 ## Stateless Deployment Considerations (Section 9.4)
