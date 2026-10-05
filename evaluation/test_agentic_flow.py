@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 from plant_pest_detector import PlantPestDetector
 from qa_engine_agentic import (
@@ -132,5 +132,6 @@ def test_agentic_flow(image_path):
 
 
 if __name__ == "__main__":
-    image_path = sys.argv[1] if len(sys.argv) > 1 else "test_images/test_img1.jpg"
+    default_image = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'samples', 'test_img.png'))
+    image_path = sys.argv[1] if len(sys.argv) > 1 else default_image
     test_agentic_flow(image_path)
