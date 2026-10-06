@@ -6,6 +6,8 @@ Plant Doctor begins with a simple question, identify a pest or disease from a pl
 
 This repository separates diagnosis from downstream action. A vision model identifies the likely pest or disease. A separate agent gathers bounded local context through specialist tools, combines the available evidence, and produces a treatment plan with product options. The application supports MCP exposure so the same specialist tools can be consumed through a standard boundary.
 
+For interactive visual walkthroughs of the staged diagnostic pipeline, MCP dual-interface architecture, autonomous tool-calling sequence, Cloud Run CI/CD deployment, and graceful degradation workflows, see the [interactive architecture and workflow diagrams](#architecture-and-workflow-diagrams).
+
 ## What You Will Run
 
 | Chapter section | Demonstration | What it shows |
@@ -201,28 +203,32 @@ Run the tests before changing image handling, tool schemas, local-context retrie
 ├── samples/                             # Plant images for local demonstration
 ├── evaluation/                          # Benchmark queries and agent-flow tests
 ├── workflow/
-│   ├── 01_agentic_detection_flow.md
-│   ├── 02_mcp_architecture.md
-│   ├── 03_tool_calling_sequence.md
-│   ├── 04_cloud_deployment.md
-│   ├── 05_graceful_degradation.md
-│   └── 06_deployment_tutorial.md
+│   ├── 01_agentic_detection_flow.html     # Interactive staged diagnosis & treatment workflow
+│   ├── 01_agentic_detection_flow.md       # Figure 9.3 source and design principles
+│   ├── 02_mcp_architecture.html           # Interactive MCP dual-interface architecture workflow
+│   ├── 02_mcp_architecture.md             # Dual-interface reference and mapping
+│   ├── 03_tool_calling_sequence.html      # Interactive autonomous tool-calling workflow
+│   ├── 03_tool_calling_sequence.md        # Sequence diagram source and traces
+│   ├── 04_cloud_deployment.html           # Interactive Cloud Run CI/CD pipeline workflow
+│   ├── 04_cloud_deployment.md             # Figure 9.6 source and stateless deployment notes
+│   ├── 05_graceful_degradation.html       # Interactive graceful degradation workflow
+│   ├── 05_graceful_degradation.md         # Incomplete context handling principles
+│   └── 06_deployment_tutorial.md          # Step-by-step GCP Cloud Run deployment tutorial
 └── .github/workflows/
     └── deploy.yml                       # Manual Cloud Run deployment workflow
 ```
 
-## Architecture Diagrams and Supporting Documents
+## Architecture and Workflow Diagrams
 
-The `workflow/` directory contains the Chapter 9 figures:
+Interactive Archify workflow diagrams illustrate the staged vision-to-treatment pipeline, MCP dual-interface architecture, autonomous Gemini tool calling, serverless Cloud Run deployment, and graceful degradation under partial context. The companion markdown references and deployment guides are available in `workflow/`.
 
-- Diagnosis and location-aware treatment planning.
-- MCP exposure of specialist agricultural tools.
-- Tool-calling sequence and return values.
-- GitHub Actions, Artifact Registry, and Cloud Run deployment.
-- Graceful degradation when local context is incomplete.
-- A step-by-step Cloud Run deployment guide.
+- [01: Staged Diagnosis and Treatment Workflow](https://the-write-path-code.github.io/ch09-plant-doctor/workflow/01_agentic_detection_flow.html) — Illustrates the 3-stage agentic pipeline separating Gemini Vision diagnosis from downstream contextual treatment planning with a human input halt boundary.
+- [02: MCP and Dual-Interface Architecture](https://the-write-path-code.github.io/ch09-plant-doctor/workflow/02_mcp_architecture.html) — Maps the dual-interface pattern where shared agricultural tools (`agri_tools.py`) serve both native Gemini in-process function calling and external FastMCP HTTP clients.
+- [03: Gemini Autonomous Tool-Calling Sequence](https://the-write-path-code.github.io/ch09-plant-doctor/workflow/03_tool_calling_sequence.html) — Traces the message flow as Gemini autonomously queries NOAA weather and USDA soil APIs before executing targeted Serper/Amazon remedy searches.
+- [04: Cloud Run CI/CD Deployment Pipeline](https://the-write-path-code.github.io/ch09-plant-doctor/workflow/04_cloud_deployment.html) — Details the GitHub Actions pipeline building multi-stage Linux AMD64 containers, pushing to Artifact Registry, and deploying to Google Cloud Run.
+- [05: Graceful Degradation Under Incomplete Context](https://the-write-path-code.github.io/ch09-plant-doctor/workflow/05_graceful_degradation.html) — Shows best-effort fallback paths and warning badges when weather or soil telemetry timeouts occur or when product search is rate-limited.
 
-Start with `01_agentic_detection_flow.md`. It shows the design boundary that governs the repository: image recognition produces a diagnosis; local context and specialist tools support treatment planning; neither stage should take an irreversible action on its own.
+Start with `01_agentic_detection_flow.html` and the companion document `01_agentic_detection_flow.md`. They show the design boundary that governs the repository: image recognition produces a diagnosis; local context and specialist tools support treatment planning; neither stage should take an irreversible action on its own.
 
 ## Safety and Operational Limits
 
